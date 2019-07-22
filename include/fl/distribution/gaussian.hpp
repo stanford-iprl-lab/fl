@@ -461,10 +461,9 @@ public:
 
         if(has_full_rank())
         {
+            const Variate dx = vector - mean();
             return log_normalizer() - 0.5
-                    * (vector - mean()).transpose()
-                    * precision()
-                    * (vector - mean());
+                    * (dx.transpose() * precision() * dx)(0);
         }
 
         return -std::numeric_limits<Real>::infinity();
