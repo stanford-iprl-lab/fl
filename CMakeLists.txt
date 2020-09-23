@@ -7,6 +7,7 @@ project(fl)
 option(fl_USE_CATKIN "Use catkin build system" ON)
 option(fl_USE_RANDOM_SEED "Use random seeds for number generators" ON)
 set(fl_FLOATING_POINT_TYPE "double" CACHE STRING "fl::Real floating point type")
+option(fl_BUILD_TESTS "Compile tests" OFF)
 
 ############################
 # Flags                    #
@@ -111,18 +112,27 @@ include(${fl_MODULE_PATH}/doxygen.cmake)
 ############################
 # Build                    #
 ############################
-include_directories(include)
 file(GLOB_RECURSE header_files include/${PROJECT_NAME}/*.hpp
                                include/${PROJECT_NAME}/*.h
                                include/ff/*.hpp
                                include/ff/*.h)
 
 add_library(${PROJECT_NAME} ${header_files})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${Boost_INCLUDE_DIRS}
+    include
+)
+
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 ############################
 # Tests                    #
 ############################
-enable_testing()
-include(${fl_MODULE_PATH}/gtest.cmake)
-add_subdirectory(test)
+if(fl_BUILD_TESTS)
+    enable_testing()
+    include(${fl_MODULE_PATH}/gtest.cmake)
+    add_subdirectory(test)
+endif()
