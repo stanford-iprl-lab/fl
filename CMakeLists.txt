@@ -50,12 +50,16 @@ include(${fl_MODULE_PATH}/definitions.cmake)
 ############################
 # Dependencies            ##
 ############################
-find_package(Eigen REQUIRED)
-include_directories(${Eigen_INCLUDE_DIRS})
-add_definitions(${Eigen_DEFINITIONS})
+if(NOT TARGET Eigen3::Eigen)
+    find_package(Eigen REQUIRED)
+    include_directories(${Eigen_INCLUDE_DIRS})
+    add_definitions(${Eigen_DEFINITIONS})
+else()
+    get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen
+        INTERFACE_INCLUDE_DIRECTORIES)
+endif()
 
 find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
 
 #find_package(OpenMP)
 #if(OPENMP_FOUND)
@@ -67,16 +71,16 @@ include_directories(${Boost_INCLUDE_DIRS})
 ############################
 ## catkin                  #
 ############################
-if(fl_USE_CATKIN)
-    find_package(catkin REQUIRED)
-endif(fl_USE_CATKIN)
+# if(fl_USE_CATKIN)
+#     find_package(catkin REQUIRED)
+# endif(fl_USE_CATKIN)
 
-if(catkin_FOUND AND fl_USE_CATKIN)
-    set(fl_USING_CATKIN YES)
-    catkin_package(INCLUDE_DIRS include DEPENDS Eigen Boost)
-else(catkin_FOUND AND fl_USE_CATKIN)
-    set(fl_USING_CATKIN NO)
-endif(catkin_FOUND AND fl_USE_CATKIN)
+# if(catkin_FOUND AND fl_USE_CATKIN)
+#     set(fl_USING_CATKIN YES)
+#     catkin_package(INCLUDE_DIRS include DEPENDS Eigen Boost)
+# else(catkin_FOUND AND fl_USE_CATKIN)
+#     set(fl_USING_CATKIN NO)
+# endif(catkin_FOUND AND fl_USE_CATKIN)
 
 ############################
 # Documentation Generation #
